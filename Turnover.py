@@ -48,7 +48,11 @@ def is_on_boundary(col, row):
 
 
 ################################################################################################
-cocos.director.director.init()
-turnover_layer = Turnover()
-main_scene = cocos.scene.Scene(turnover_layer)
-cocos.director.director.run(main_scene)
+def main():
+    cocos.director.director.init()
+    turnover_layer = Turnover()
+    main_scene = cocos.scene.Scene(turnover_layer)
+    cocos.director.director.run(main_scene)
+
+if __name__ == '__main__':
+    main()
