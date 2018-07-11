@@ -48,6 +48,9 @@ class TipsLayer(cocos.layer.Layer):
     def __init__(self):
         super(TipsLayer, self).__init__()
 
+        self.sprite_cur = Sprite(image='sq-cur.png')
+        self.add(self.sprite_cur)
+
 ################################################################################################
 
 
