@@ -14,21 +14,31 @@ PADDING = 4
 ################################################################################################
 
 
-class Turnover(cocos.layer.Layer):
+class BackgroundLayer(cocos.layer.ColorLayer):
     def __init__(self):
-        super(Turnover, self).__init__()
+        super(BackgroundLayer, self).__init__(r=255, g=255, b=255, a=255)
 
-        init_squares()
 
-        label = cocos.text.Label(
-            '\n'.join([str(row) for row in squares]),
-            font_name='Times New Roman',
-            font_size=32,
-            anchor_x='center', anchor_y='center',
-            multiline=True, width=240
-        )
-        label.position = 320, 240
-        self.add(label)
+class SquaresLayer(cocos.layer.Layer):
+    def __init__(self):
+        super(SquaresLayer, self).__init__()
+
+        squares_sprites = []
+        
+        # label = cocos.text.Label(
+        #     '\n'.join([str(row) for row in squares]),
+        #     font_name='Times New Roman',
+        #     font_size=32,
+        #     anchor_x='center', anchor_y='center',
+        #     multiline=True, width=240
+        # )
+        # label.position = 320, 240
+        # self.add(label)
+
+
+class TipsLayer(cocos.layer.Layer):
+    def __init__(self):
+        super(TipsLayer, self).__init__()
 
 ################################################################################################
 
@@ -50,9 +60,15 @@ def is_on_boundary(col, row):
 ################################################################################################
 def main():
     cocos.director.director.init()
-    turnover_layer = Turnover()
-    main_scene = cocos.scene.Scene(turnover_layer)
+    init_squares()
+
+    background_layer = BackgroundLayer()
+    squares_layer = SquaresLayer()
+    tips_layer = TipsLayer()
+
+    main_scene = cocos.scene.Scene(background_layer, squares_layer, tips_layer)
     cocos.director.director.run(main_scene)
+
 
 if __name__ == '__main__':
     main()
