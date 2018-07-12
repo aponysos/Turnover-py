@@ -49,23 +49,38 @@ class TipsLayer(cocos.layer.Layer):
         super(TipsLayer, self).__init__()
         self.is_event_handler = True
 
-        self.sprint_selected = []
-        self.sprite_cur = Sprite(image='sq-cur.png', position=pos2xy(0, 0))
-        self.add(self.sprite_cur)
+        self.sprite_cur = None
+        self.sprite_selected = []
+        self.update_tips()
 
     def on_key_press(self, key, modifiers):
         if (key == pyglet.window.key.ENTER):
             on_enter_keypress()
         elif (key == pyglet.window.key.ESCAPE):
             on_esc_keypress()
-            return True
         elif (key >= pyglet.window.key.LEFT and key <= pyglet.window.key.DOWN):
             on_dir_keypress(key)
 
         self.update_tips()
 
+        if key == pyglet.window.key.ESCAPE:
+            return True
+
     def update_tips(self):
-        self.sprite_cur.position = pos2xy(cur_col, cur_row)
+        for sp in self.sprite_selected:
+            self.remove(sp)
+
+        self.sprite_selected = []
+        for s in selected:
+            sprite = Sprite(image='sq-sel.png', position=pos2xy(s[0], s[1]))
+            self.sprite_selected.append(sprite)
+            self.add(sprite)
+
+        if self.sprite_cur != None:
+            self.remove(self.sprite_cur)
+        self.sprite_cur = Sprite(
+            image='sq-cur.png', position=pos2xy(cur_col, cur_row))
+        self.add(self.sprite_cur)
 
 ################################################################################################
 
@@ -98,9 +113,13 @@ def on_dir_keypress(key):
         return
 
     if (is_selecting()):
-        pass
-    else:
-        pass
+        i = index_of_selected(next_col, next_row)
+        if i < 0:
+            selected.append((next_col, next_row))
+        elif i == len(selected) - 2:
+            selected.pop()
+        else:
+            return
 
     cur_col, cur_row = next_col, next_row
 
@@ -147,6 +166,12 @@ def cancel_selecting():
 def is_done():
     return False
 
+
+def index_of_selected(col, row):
+    for i, s in enumerate(selected):
+        if (col == s[0] and row == s[1]):
+            return i
+    return -1
 
 ################################################################################################
 
