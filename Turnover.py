@@ -90,7 +90,9 @@ def on_enter_keypress():
 
     if (is_selecting()):
         if (is_done()):
-            pass
+            print("Done")
+        else:
+            print("Not Done")
     else:
         selected.append((cur_col, cur_row))
 
@@ -98,7 +100,8 @@ def on_enter_keypress():
 def on_esc_keypress():
     print("on_esc_keypress")
 
-    cancel_selecting()
+    global selected
+    selected = []
 
 
 def on_dir_keypress(key):
@@ -136,7 +139,7 @@ def init_squares():
         for row in range(max_row)] for col in range(max_col)]
     selected = []
     cur_col, cur_row = (0, 0)
-
+    print(squares)
 
 def check_bound(col, row):
     global max_col, max_row
@@ -158,13 +161,24 @@ def is_selecting():
     return len(selected) > 0
 
 
-def cancel_selecting():
-    global selected
-    selected = []
-
-
 def is_done():
-    return False
+    # copy states
+    squares_done = squares.copy()
+
+    # turn over states
+    for s in selected:
+        if (not is_on_boundary(s[0], s[1])):
+            squares_done[s[0]][s[1]] = 1 - squares_done[s[0]][s[1]]
+
+    print(squares_done)
+    # check rows
+    for row in range(1, max_row - 1):
+        state = squares_done[1][row]
+        for col in range(1, max_col - 1):
+            if state != squares_done[col][row]:
+                return False
+
+    return True
 
 
 def index_of_selected(col, row):
