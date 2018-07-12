@@ -11,7 +11,7 @@ rate = 0.4
 
 squares = []
 selected = []
-cur = (0, 0)
+cur_col, cur_row = (0, 0)
 
 ST_NONE = 0
 ST_BLACK = 1
@@ -49,6 +49,7 @@ class TipsLayer(cocos.layer.Layer):
         super(TipsLayer, self).__init__()
         self.is_event_handler = True
 
+        self.sprint_selected = []
         self.sprite_cur = Sprite(image='sq-cur.png', position=pos2xy(0, 0))
         self.add(self.sprite_cur)
 
@@ -59,8 +60,12 @@ class TipsLayer(cocos.layer.Layer):
             on_esc_keypress()
             return True
         elif (key >= pyglet.window.key.LEFT and key <= pyglet.window.key.DOWN):
-            on_dir_keypress(key - pyglet.window.key.LEFT)
+            on_dir_keypress(key)
 
+        self.update_tips()
+
+    def update_tips(self):
+        self.sprite_cur.position = pos2xy(cur_col, cur_row)
 
 ################################################################################################
 
@@ -68,13 +73,36 @@ class TipsLayer(cocos.layer.Layer):
 def on_enter_keypress():
     print("on_enter_keypress")
 
+    if (is_selecting()):
+        if (is_done()):
+            pass
+    else:
+        selected.append((cur_col, cur_row))
+
 
 def on_esc_keypress():
     print("on_esc_keypress")
 
+    cancel_selecting()
 
-def on_dir_keypress(dir):
-    print("on_dir_keypress: %d" % dir)
+
+def on_dir_keypress(key):
+    print("on_dir_keypress: %d" % key)
+
+    global cur_col, cur_row
+    dir = key - pyglet.window.key.LEFT
+    next_col = cur_col + MOVES[dir][0]
+    next_row = cur_row + MOVES[dir][1]
+
+    if (not check_bound(next_col, next_row)):
+        return
+
+    if (is_selecting()):
+        pass
+    else:
+        pass
+
+    cur_col, cur_row = next_col, next_row
 
 
 ################################################################################################
@@ -82,13 +110,18 @@ def on_dir_keypress(dir):
 
 def init_squares():
     global max_col, max_row
-    global squares, selected, cur
+    global squares, selected, cur_col, cur_row
     squares = [[
         ST_BLACK if (not is_on_boundary(col, row)
                      and random.random() < rate) else ST_NONE
         for row in range(max_row)] for col in range(max_col)]
     selected = []
-    cur = (0, 0)
+    cur_col, cur_row = (0, 0)
+
+
+def check_bound(col, row):
+    global max_col, max_row
+    return col >= 0 and col < max_col and row >= 0 and row < max_row
 
 
 def is_on_boundary(col, row):
@@ -99,6 +132,21 @@ def is_on_boundary(col, row):
 def pos2xy(col, row):
     global WINDOW_WIDTH, WINDOW_HEIGHT
     return (col * SQUARE_SIZE + WINDOW_PADDING, WINDOW_HEIGHT - row * SQUARE_SIZE - WINDOW_PADDING)
+
+
+def is_selecting():
+    global selected
+    return len(selected) > 0
+
+
+def cancel_selecting():
+    global selected
+    selected = []
+
+
+def is_done():
+    return False
+
 
 ################################################################################################
 
