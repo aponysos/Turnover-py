@@ -4,6 +4,7 @@ from cocos.director import director
 from cocos.scene import Scene
 from cocos.sprite import Sprite
 import random
+import copy
 
 max_row = 6
 max_col = 4
@@ -152,15 +153,12 @@ def is_selecting():
 
 def is_done():
     # copy states
-    squares_done = squares.copy()
+    squares_done = copy.deepcopy(squares)
 
     # turn over states
     for s in selected:
         if (not is_on_boundary(s[0], s[1])):
-            squares_done[s[0]][s[1]] = 1 - squares_done[s[0]][s[1]]
-
-    print(selected)
-    print(squares_done)
+            squares_done[s[0]][s[1]] = ST_BLACK - squares_done[s[0]][s[1]]
 
     # check rows
     for row in range(1, max_row - 1):
