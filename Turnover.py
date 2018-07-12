@@ -86,8 +86,6 @@ class TipsLayer(cocos.layer.Layer):
 
 
 def on_enter_keypress():
-    print("on_enter_keypress")
-
     if (is_selecting()):
         if (is_done()):
             print("Done")
@@ -98,15 +96,11 @@ def on_enter_keypress():
 
 
 def on_esc_keypress():
-    print("on_esc_keypress")
-
     global selected
     selected = []
 
 
 def on_dir_keypress(key):
-    print("on_dir_keypress: %d" % key)
-
     global cur_col, cur_row
     dir = key - pyglet.window.key.LEFT
     next_col = cur_col + MOVES[dir][0]
@@ -131,7 +125,6 @@ def on_dir_keypress(key):
 
 
 def init_squares():
-    global max_col, max_row
     global squares, selected, cur_col, cur_row
     squares = [[
         ST_BLACK if (not is_on_boundary(col, row)
@@ -142,22 +135,18 @@ def init_squares():
     print(squares)
 
 def check_bound(col, row):
-    global max_col, max_row
     return col >= 0 and col < max_col and row >= 0 and row < max_row
 
 
 def is_on_boundary(col, row):
-    global max_col, max_row
     return col == 0 or col == max_col-1 or row == 0 or row == max_row-1
 
 
 def pos2xy(col, row):
-    global WINDOW_WIDTH, WINDOW_HEIGHT
     return (col * SQUARE_SIZE + WINDOW_PADDING, WINDOW_HEIGHT - row * SQUARE_SIZE - WINDOW_PADDING)
 
 
 def is_selecting():
-    global selected
     return len(selected) > 0
 
 
@@ -170,7 +159,9 @@ def is_done():
         if (not is_on_boundary(s[0], s[1])):
             squares_done[s[0]][s[1]] = 1 - squares_done[s[0]][s[1]]
 
+    print(selected)
     print(squares_done)
+
     # check rows
     for row in range(1, max_row - 1):
         state = squares_done[1][row]
