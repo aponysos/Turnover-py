@@ -47,14 +47,41 @@ class SquaresLayer(cocos.layer.Layer):
 class TipsLayer(cocos.layer.Layer):
     def __init__(self):
         super(TipsLayer, self).__init__()
+        self.is_event_handler = True
 
-        self.sprite_cur = Sprite(image='sq-cur.png')
+        self.sprite_cur = Sprite(image='sq-cur.png', position=pos2xy(0, 0))
         self.add(self.sprite_cur)
+
+    def on_key_press(self, key, modifiers):
+        if (key == pyglet.window.key.ENTER):
+            on_enter_keypress()
+        elif (key == pyglet.window.key.ESCAPE):
+            on_esc_keypress()
+            return True
+        elif (key >= pyglet.window.key.LEFT and key <= pyglet.window.key.DOWN):
+            on_dir_keypress(key - pyglet.window.key.LEFT)
+
+
+################################################################################################
+
+
+def on_enter_keypress():
+    print("on_enter_keypress")
+
+
+def on_esc_keypress():
+    print("on_esc_keypress")
+
+
+def on_dir_keypress(dir):
+    print("on_dir_keypress: %d" % dir)
+
 
 ################################################################################################
 
 
 def init_squares():
+    global max_col, max_row
     global squares, selected, cur
     squares = [[
         ST_BLACK if (not is_on_boundary(col, row)
@@ -65,6 +92,7 @@ def init_squares():
 
 
 def is_on_boundary(col, row):
+    global max_col, max_row
     return col == 0 or col == max_col-1 or row == 0 or row == max_row-1
 
 
